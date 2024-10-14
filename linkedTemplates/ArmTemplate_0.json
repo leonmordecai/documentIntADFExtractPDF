@@ -1,0 +1,620 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "factoryName": {
+            "type": "string",
+            "metadata": "Data Factory name",
+            "defaultValue": "adfteo1"
+        },
+        "ls_ablob_covidreportingsa_connectionString": {
+            "type": "secureString",
+            "metadata": "Secure string for 'connectionString' of 'ls_ablob_covidreportingsa'"
+        },
+        "ls_adls_covidreportingdl_accountKey": {
+            "type": "secureString",
+            "metadata": "Secure string for 'accountKey' of 'ls_adls_covidreportingdl'"
+        },
+        "ds_db_rgteoapp_cluster_accessToken": {
+            "type": "secureString",
+            "metadata": "Secure string for 'accessToken' of 'ds_db_rgteoapp_cluster'"
+        },
+        "ls_sql_covid_password": {
+            "type": "secureString",
+            "metadata": "Secure string for 'password' of 'ls_sql_covid'"
+        },
+        "ls_afunc_afuncteo1_functionKey": {
+            "type": "secureString",
+            "metadata": "Secure string for 'functionKey' of 'ls_afunc_afuncteo1'"
+        },
+        "ls_afunc_aduncteo2_masterkey_functionKey": {
+            "type": "secureString",
+            "metadata": "Secure string for 'functionKey' of 'ls_afunc_aduncteo2_masterkey'"
+        },
+        "ls_adls_covidreportingdl_properties_typeProperties_url": {
+            "type": "string",
+            "defaultValue": "https://adlteo1.dfs.core.windows.net/"
+        },
+        "ls_http_ecdc_eu_properties_typeProperties_url": {
+            "type": "string",
+            "defaultValue": "https://github.com"
+        },
+        "ls_sql_covid_properties_typeProperties_server": {
+            "type": "string",
+            "defaultValue": "sql-sv-teo1.database.windows.net"
+        },
+        "ls_sql_covid_properties_typeProperties_database": {
+            "type": "string",
+            "defaultValue": "sql-db-teo1"
+        },
+        "ls_sql_covid_properties_typeProperties_userName": {
+            "type": "string",
+            "defaultValue": "admin1"
+        },
+        "ls_afunc_afuncteo1_properties_typeProperties_functionAppUrl": {
+            "type": "string",
+            "defaultValue": "https://afuncteo1.azurewebsites.net"
+        },
+        "ls_afunc_aduncteo2_masterkey_properties_typeProperties_functionAppUrl": {
+            "type": "string",
+            "defaultValue": "https://afuncteo1.azurewebsites.net"
+        },
+        "ls_rest_resreqdummysite_properties_typeProperties_url": {
+            "type": "string",
+            "defaultValue": "https://reqres.in/api/users"
+        },
+        "ls_rest_forextractfrompdftemplate_properties_typeProperties_url": {
+            "type": "string",
+            "defaultValue": "@{linkedService().url}"
+        },
+        "ls_rest_pokeapi_properties_typeProperties_url": {
+            "type": "string",
+            "defaultValue": "https://pokeapi.co/api/v2/pokemon"
+        }
+    },
+    "variables": {
+        "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+    },
+    "resources": [
+        {
+            "name": "[concat(parameters('factoryName'), '/ls_ablob_covidreportingsa')]",
+            "type": "Microsoft.DataFactory/factories/linkedServices",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "annotations": [],
+                "type": "AzureBlobStorage",
+                "typeProperties": {
+                    "connectionString": "[parameters('ls_ablob_covidreportingsa_connectionString')]"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ls_adls_covidreportingdl')]",
+            "type": "Microsoft.DataFactory/factories/linkedServices",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "annotations": [],
+                "type": "AzureBlobFS",
+                "typeProperties": {
+                    "url": "[parameters('ls_adls_covidreportingdl_properties_typeProperties_url')]",
+                    "accountKey": {
+                        "type": "SecureString",
+                        "value": "[parameters('ls_adls_covidreportingdl_accountKey')]"
+                    }
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ls_http_ecdc_eu')]",
+            "type": "Microsoft.DataFactory/factories/linkedServices",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "annotations": [],
+                "type": "HttpServer",
+                "typeProperties": {
+                    "url": "[parameters('ls_http_ecdc_eu_properties_typeProperties_url')]",
+                    "enableServerCertificateValidation": true,
+                    "authenticationType": "Anonymous"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ds_db_rgteoapp_cluster')]",
+            "type": "Microsoft.DataFactory/factories/linkedServices",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "annotations": [],
+                "type": "AzureDatabricks",
+                "typeProperties": {
+                    "domain": "https://adb-4054511197460956.16.azuredatabricks.net",
+                    "accessToken": {
+                        "type": "SecureString",
+                        "value": "[parameters('ds_db_rgteoapp_cluster_accessToken')]"
+                    },
+                    "newClusterNodeType": "Standard_DS3_v2",
+                    "newClusterNumOfWorker": "1",
+                    "newClusterVersion": "10.4.x-scala2.12",
+                    "clusterOption": "Fixed",
+                    "newClusterInitScripts": []
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ls_sql_covid')]",
+            "type": "Microsoft.DataFactory/factories/linkedServices",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "annotations": [],
+                "type": "AzureSqlDatabase",
+                "typeProperties": {
+                    "server": "[parameters('ls_sql_covid_properties_typeProperties_server')]",
+                    "database": "[parameters('ls_sql_covid_properties_typeProperties_database')]",
+                    "encrypt": "mandatory",
+                    "trustServerCertificate": false,
+                    "authenticationType": "SQL",
+                    "userName": "[parameters('ls_sql_covid_properties_typeProperties_userName')]",
+                    "password": {
+                        "type": "SecureString",
+                        "value": "[parameters('ls_sql_covid_password')]"
+                    }
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ls_afunc_afuncteo1')]",
+            "type": "Microsoft.DataFactory/factories/linkedServices",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "annotations": [],
+                "type": "AzureFunction",
+                "typeProperties": {
+                    "functionAppUrl": "[parameters('ls_afunc_afuncteo1_properties_typeProperties_functionAppUrl')]",
+                    "authentication": "Anonymous",
+                    "functionKey": {
+                        "type": "SecureString",
+                        "value": "[parameters('ls_afunc_afuncteo1_functionKey')]"
+                    }
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ls_afunc_aduncteo2_masterkey')]",
+            "type": "Microsoft.DataFactory/factories/linkedServices",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "annotations": [],
+                "type": "AzureFunction",
+                "typeProperties": {
+                    "functionAppUrl": "[parameters('ls_afunc_aduncteo2_masterkey_properties_typeProperties_functionAppUrl')]",
+                    "authentication": "Anonymous",
+                    "functionKey": {
+                        "type": "SecureString",
+                        "value": "[parameters('ls_afunc_aduncteo2_masterkey_functionKey')]"
+                    }
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ls_rest_resreqdummysite')]",
+            "type": "Microsoft.DataFactory/factories/linkedServices",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "annotations": [],
+                "type": "RestService",
+                "typeProperties": {
+                    "url": "[parameters('ls_rest_resreqdummysite_properties_typeProperties_url')]",
+                    "enableServerCertificateValidation": false,
+                    "authenticationType": "Anonymous"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ls_rest_forextractfrompdftemplate')]",
+            "type": "Microsoft.DataFactory/factories/linkedServices",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "parameters": {
+                    "url": {
+                        "type": "string"
+                    }
+                },
+                "annotations": [],
+                "type": "RestService",
+                "typeProperties": {
+                    "url": "[parameters('ls_rest_forextractfrompdftemplate_properties_typeProperties_url')]",
+                    "enableServerCertificateValidation": false,
+                    "authenticationType": "Anonymous",
+                    "authHeaders": {
+                        "Ocp-Apim-Subscription-Key": {
+                            "type": "SecureString",
+                            "value": "**********"
+                        }
+                    }
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ls_rest_pokeapi')]",
+            "type": "Microsoft.DataFactory/factories/linkedServices",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "annotations": [],
+                "type": "RestService",
+                "typeProperties": {
+                    "url": "[parameters('ls_rest_pokeapi_properties_typeProperties_url')]",
+                    "enableServerCertificateValidation": true,
+                    "authenticationType": "Anonymous"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/integrationRuntime1')]",
+            "type": "Microsoft.DataFactory/factories/integrationRuntimes",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "type": "Managed",
+                "typeProperties": {
+                    "computeProperties": {
+                        "location": "East US",
+                        "dataFlowProperties": {
+                            "computeType": "General",
+                            "coreCount": 8,
+                            "timeToLive": 10,
+                            "cleanup": false,
+                            "customProperties": []
+                        }
+                    }
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/integrationRuntime2')]",
+            "type": "Microsoft.DataFactory/factories/integrationRuntimes",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "type": "Managed",
+                "typeProperties": {
+                    "computeProperties": {
+                        "location": "East US 2",
+                        "dataFlowProperties": {
+                            "computeType": "General",
+                            "coreCount": 8,
+                            "timeToLive": 10,
+                            "cleanup": false,
+                            "customProperties": []
+                        }
+                    }
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/pl_restapi_put_method')]",
+            "type": "Microsoft.DataFactory/factories/pipelines",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "activities": [
+                    {
+                        "name": "Wait1",
+                        "type": "Wait",
+                        "dependsOn": [],
+                        "userProperties": [],
+                        "typeProperties": {
+                            "waitTimeInSeconds": 1
+                        }
+                    }
+                ],
+                "policy": {
+                    "elapsedTimeMetric": {}
+                },
+                "annotations": [],
+                "lastPublishTime": "2024-07-16T06:45:06Z"
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/pl_restapi_post_method')]",
+            "type": "Microsoft.DataFactory/factories/pipelines",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "activities": [
+                    {
+                        "name": "Wait1",
+                        "type": "Wait",
+                        "dependsOn": [],
+                        "userProperties": [],
+                        "typeProperties": {
+                            "waitTimeInSeconds": 1
+                        }
+                    }
+                ],
+                "policy": {
+                    "elapsedTimeMetric": {}
+                },
+                "annotations": [],
+                "lastPublishTime": "2024-07-16T06:45:06Z"
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/df_extract_data_from_pdf_template')]",
+            "type": "Microsoft.DataFactory/factories/dataflows",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "description": "This dataflow takes the output from Cognitive Services and extracts the PDF information to a storage sink.\nThis specifically works with the prebuilt-read model, but you can adjust as needed. You can also save the transformations as a flowlet if you would like to reuse the logic in other dataflows. \n\nIf you choose to use other prebuilt models, please note that you may need to reimport your dataflow source schema and make some adjustments to the transformations.",
+                "type": "MappingDataFlow",
+                "typeProperties": {
+                    "sources": [
+                        {
+                            "linkedService": {
+                                "referenceName": "ls_rest_forextractfrompdftemplate",
+                                "type": "LinkedServiceReference"
+                            },
+                            "name": "source1"
+                        }
+                    ],
+                    "sinks": [
+                        {
+                            "linkedService": {
+                                "referenceName": "ls_ablob_covidreportingsa",
+                                "type": "LinkedServiceReference"
+                            },
+                            "name": "sink1"
+                        }
+                    ],
+                    "transformations": [
+                        {
+                            "name": "flatten1"
+                        },
+                        {
+                            "name": "derivedColumn1"
+                        }
+                    ],
+                    "scriptLines": [
+                        "parameters{",
+                        "     OutputFolder as string ('output'),",
+                        "     OutputContainer as string ('formrecognizer')",
+                        "}",
+                        "source(output(",
+                        "          body as (analyzeResult as (apiVersion as date, content as string, languages as (confidence as double, locale as string, spans as (length as short, offset as short)[])[], modelId as string, pages as (angle as boolean, height as short, kind as string, lines as (content as string, polygon as short[], spans as (length as short, offset as short)[])[], pageNumber as string, spans as (length as short, offset as boolean)[], unit as string, width as short, words as (confidence as double, content as string, polygon as short[], span as (length as short, offset as short))[])[], paragraphs as (boundingRegions as (pageNumber as string, polygon as short[])[], content as string, spans as (length as short, offset as short)[])[], stringIndexType as string, styles as string[]), createdDateTime as timestamp, lastUpdatedDateTime as timestamp, status as string),",
+                        "          headers as [string,string]",
+                        "     ),",
+                        "     allowSchemaDrift: true,",
+                        "     validateSchema: false,",
+                        "     inferDriftedColumnTypes: true,",
+                        "     format: 'rest',",
+                        "     timeout: 30,",
+                        "     requestInterval: 0,",
+                        "     httpMethod: 'GET',",
+                        "     paginationRules: ['supportRFC5988' -> 'true'],",
+                        "     responseFormat: ['type' -> 'json', 'documentForm' -> 'documentPerLine']) ~> source1",
+                        "source1 foldDown(unroll(body.analyzeResult.paragraphs),",
+                        "     mapColumn(",
+                        "          content = body.analyzeResult.paragraphs.content,",
+                        "          pageNumber = body.analyzeResult.paragraphs.boundingRegions.pageNumber",
+                        "     ),",
+                        "     skipDuplicateMapInputs: false,",
+                        "     skipDuplicateMapOutputs: false) ~> flatten1",
+                        "flatten1 derive(content = content,",
+                        "          pageNumber = pageNumber[1]) ~> derivedColumn1",
+                        "derivedColumn1 sink(allowSchemaDrift: true,",
+                        "     validateSchema: false,",
+                        "     format: 'delimited',",
+                        "     container: ($OutputContainer),",
+                        "     folderPath: ($OutputFolder),",
+                        "     columnDelimiter: ',',",
+                        "     escapeChar: '\\\\',",
+                        "     quoteChar: '\\\"',",
+                        "     columnNamesAsHeader: true,",
+                        "     skipDuplicateMapInputs: true,",
+                        "     skipDuplicateMapOutputs: true) ~> sink1"
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/ls_rest_forextractfrompdftemplate')]",
+                "[concat(variables('factoryId'), '/linkedServices/ls_ablob_covidreportingsa')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ds_adls_covidreportingdl')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "ls_adls_covidreportingdl",
+                    "type": "LinkedServiceReference"
+                },
+                "folder": {
+                    "name": "processed"
+                },
+                "annotations": [],
+                "type": "DelimitedText",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobFSLocation",
+                        "fileName": "population_by_age_tsv",
+                        "folderPath": "population",
+                        "fileSystem": "raw"
+                    },
+                    "columnDelimiter": "\t",
+                    "escapeChar": "\\",
+                    "firstRowAsHeader": true,
+                    "quoteChar": "\""
+                },
+                "schema": []
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/ls_adls_covidreportingdl')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ds_population_raw_gz')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "ls_ablob_covidreportingsa",
+                    "type": "LinkedServiceReference"
+                },
+                "folder": {
+                    "name": "raw"
+                },
+                "annotations": [],
+                "type": "DelimitedText",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobStorageLocation",
+                        "fileName": "population_by_age.tsv.gz",
+                        "container": "population"
+                    },
+                    "columnDelimiter": "\t",
+                    "compressionCodec": "gzip",
+                    "compressionLevel": "Optimal",
+                    "escapeChar": "\\",
+                    "firstRowAsHeader": true,
+                    "quoteChar": "\""
+                },
+                "schema": [
+                    {
+                        "name": "\u001f�\b\bHK�^\u0000\u0003tps00010.tsv\u0000�\\ێ�H�}�~E~�� ����ۖ�B�l��j��\u0002\u0006�c",
+                        "type": "String"
+                    },
+                    {
+                        "name": "�aw����U���8��jz�m�p$Q�ɸg0�������\u001f?���o�������_�\u000e]��!ᒰm\u0004[�N0",
+                        "type": "String"
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/ls_ablob_covidreportingsa')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ds_ecdc_raw_csv_dl')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "ls_adls_covidreportingdl",
+                    "type": "LinkedServiceReference"
+                },
+                "parameters": {
+                    "fileName": {
+                        "type": "string"
+                    }
+                },
+                "folder": {
+                    "name": "raw"
+                },
+                "annotations": [],
+                "type": "DelimitedText",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobFSLocation",
+                        "fileName": {
+                            "value": "@dataset().fileName",
+                            "type": "Expression"
+                        },
+                        "folderPath": "ecdc",
+                        "fileSystem": "raw"
+                    },
+                    "columnDelimiter": ",",
+                    "escapeChar": "\\",
+                    "firstRowAsHeader": true,
+                    "quoteChar": "\""
+                },
+                "schema": []
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/ls_adls_covidreportingdl')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ds_ecdc_raw_csv_http')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "ls_http_ecdc_eu",
+                    "type": "LinkedServiceReference"
+                },
+                "parameters": {
+                    "relativeURL": {
+                        "type": "string"
+                    }
+                },
+                "folder": {
+                    "name": "raw"
+                },
+                "annotations": [],
+                "type": "DelimitedText",
+                "typeProperties": {
+                    "location": {
+                        "type": "HttpServerLocation",
+                        "relativeUrl": {
+                            "value": "@dataset().relativeURL",
+                            "type": "Expression"
+                        }
+                    },
+                    "columnDelimiter": ",",
+                    "escapeChar": "\\",
+                    "firstRowAsHeader": true,
+                    "quoteChar": "\""
+                },
+                "schema": []
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/ls_http_ecdc_eu')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ds_ecdc_file_list')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "ls_ablob_covidreportingsa",
+                    "type": "LinkedServiceReference"
+                },
+                "folder": {
+                    "name": "lookup"
+                },
+                "annotations": [],
+                "type": "Json",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobStorageLocation",
+                        "fileName": "github_ecdc_file_list.json",
+                        "container": "configs"
+                    }
+                },
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "sourceRelativeURL": {
+                            "type": "string"
+                        },
+                        "sinkFileName": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/ls_ablob_covidreportingsa')]"
+            ]
+        }
+    ]
+}
