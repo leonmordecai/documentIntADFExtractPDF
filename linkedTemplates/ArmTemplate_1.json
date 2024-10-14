@@ -1,0 +1,1490 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "factoryName": {
+            "type": "string",
+            "metadata": "Data Factory name",
+            "defaultValue": "adfteo1"
+        }
+    },
+    "variables": {
+        "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+    },
+    "resources": [
+        {
+            "name": "[concat(parameters('factoryName'), '/ds_raw_cases_deaths')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "ls_adls_covidreportingdl",
+                    "type": "LinkedServiceReference"
+                },
+                "folder": {
+                    "name": "raw"
+                },
+                "annotations": [],
+                "type": "DelimitedText",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobFSLocation",
+                        "fileName": "cases_deaths.csv",
+                        "folderPath": "ecdc",
+                        "fileSystem": "raw"
+                    },
+                    "columnDelimiter": ",",
+                    "escapeChar": "\\",
+                    "firstRowAsHeader": true,
+                    "quoteChar": "\""
+                },
+                "schema": [
+                    {
+                        "name": "country",
+                        "type": "String"
+                    },
+                    {
+                        "name": "country_code",
+                        "type": "String"
+                    },
+                    {
+                        "name": "continent",
+                        "type": "String"
+                    },
+                    {
+                        "name": "population",
+                        "type": "String"
+                    },
+                    {
+                        "name": "indicator",
+                        "type": "String"
+                    },
+                    {
+                        "name": "daily_count",
+                        "type": "String"
+                    },
+                    {
+                        "name": "date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "rate_14_day",
+                        "type": "String"
+                    },
+                    {
+                        "name": "source",
+                        "type": "String"
+                    }
+                ]
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ds_country_lookup')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "ls_adls_covidreportingdl",
+                    "type": "LinkedServiceReference"
+                },
+                "folder": {
+                    "name": "lookup"
+                },
+                "annotations": [],
+                "type": "DelimitedText",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobFSLocation",
+                        "fileName": "country_lookup.csv",
+                        "folderPath": "dim_country",
+                        "fileSystem": "lookup"
+                    },
+                    "columnDelimiter": ",",
+                    "escapeChar": "\\",
+                    "firstRowAsHeader": true,
+                    "quoteChar": "\""
+                },
+                "schema": [
+                    {
+                        "name": "country",
+                        "type": "String"
+                    },
+                    {
+                        "name": "country_code_2_digit",
+                        "type": "String"
+                    },
+                    {
+                        "name": "country_code_3_digit",
+                        "type": "String"
+                    },
+                    {
+                        "name": "continent",
+                        "type": "String"
+                    },
+                    {
+                        "name": "population",
+                        "type": "String"
+                    }
+                ]
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ds_process_casesdeaths')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "ls_adls_covidreportingdl",
+                    "type": "LinkedServiceReference"
+                },
+                "folder": {
+                    "name": "processed"
+                },
+                "annotations": [],
+                "type": "DelimitedText",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobFSLocation",
+                        "folderPath": "ecdc/cases_deaths",
+                        "fileSystem": "processed"
+                    },
+                    "columnDelimiter": ",",
+                    "escapeChar": "\\",
+                    "firstRowAsHeader": true,
+                    "quoteChar": "\""
+                },
+                "schema": []
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ds_processed_hospital_adm_weekly')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "ls_adls_covidreportingdl",
+                    "type": "LinkedServiceReference"
+                },
+                "folder": {
+                    "name": "processed"
+                },
+                "annotations": [],
+                "type": "DelimitedText",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobFSLocation",
+                        "folderPath": "ecdc/hospital_admissions_weekly",
+                        "fileSystem": "processed"
+                    },
+                    "columnDelimiter": ",",
+                    "escapeChar": "\\",
+                    "firstRowAsHeader": true,
+                    "quoteChar": "\""
+                },
+                "schema": []
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ds_raw_hospital_admissions')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "ls_adls_covidreportingdl",
+                    "type": "LinkedServiceReference"
+                },
+                "folder": {
+                    "name": "raw"
+                },
+                "annotations": [],
+                "type": "DelimitedText",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobFSLocation",
+                        "fileName": "hospital_admissions.csv",
+                        "folderPath": "ecdc",
+                        "fileSystem": "raw"
+                    },
+                    "columnDelimiter": ",",
+                    "escapeChar": "\\",
+                    "firstRowAsHeader": true,
+                    "quoteChar": "\""
+                },
+                "schema": [
+                    {
+                        "name": "country",
+                        "type": "String"
+                    },
+                    {
+                        "name": "indicator",
+                        "type": "String"
+                    },
+                    {
+                        "name": "date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "year_week",
+                        "type": "String"
+                    },
+                    {
+                        "name": "value",
+                        "type": "String"
+                    },
+                    {
+                        "name": "source",
+                        "type": "String"
+                    },
+                    {
+                        "name": "url",
+                        "type": "String"
+                    }
+                ]
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ds_dimdate__lookup')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "ls_adls_covidreportingdl",
+                    "type": "LinkedServiceReference"
+                },
+                "folder": {
+                    "name": "processed"
+                },
+                "annotations": [],
+                "type": "DelimitedText",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobFSLocation",
+                        "fileName": "dim_date.csv",
+                        "folderPath": "dim_date",
+                        "fileSystem": "lookup"
+                    },
+                    "columnDelimiter": ",",
+                    "escapeChar": "\\",
+                    "firstRowAsHeader": true,
+                    "quoteChar": "\""
+                },
+                "schema": [
+                    {
+                        "name": "date_key",
+                        "type": "String"
+                    },
+                    {
+                        "name": "date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "year",
+                        "type": "String"
+                    },
+                    {
+                        "name": "month",
+                        "type": "String"
+                    },
+                    {
+                        "name": "day",
+                        "type": "String"
+                    },
+                    {
+                        "name": "day_name",
+                        "type": "String"
+                    },
+                    {
+                        "name": "day_of_year",
+                        "type": "String"
+                    },
+                    {
+                        "name": "week_of_month",
+                        "type": "String"
+                    },
+                    {
+                        "name": "week_of_year",
+                        "type": "String"
+                    },
+                    {
+                        "name": "month_name",
+                        "type": "String"
+                    },
+                    {
+                        "name": "year_month",
+                        "type": "String"
+                    },
+                    {
+                        "name": "year_week",
+                        "type": "String"
+                    }
+                ]
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ds_processed_hospital_admissions_daily')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "ls_adls_covidreportingdl",
+                    "type": "LinkedServiceReference"
+                },
+                "folder": {
+                    "name": "processed"
+                },
+                "annotations": [],
+                "type": "DelimitedText",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobFSLocation",
+                        "folderPath": "ecdc/hospital_admissions_daily",
+                        "fileSystem": "processed"
+                    },
+                    "columnDelimiter": ",",
+                    "escapeChar": "\\",
+                    "firstRowAsHeader": true,
+                    "quoteChar": "\""
+                },
+                "schema": []
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ds_sql_covid_hospital')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "ls_sql_covid",
+                    "type": "LinkedServiceReference"
+                },
+                "folder": {
+                    "name": "sqldb"
+                },
+                "annotations": [],
+                "type": "AzureSqlTable",
+                "schema": [
+                    {
+                        "name": "country",
+                        "type": "varchar"
+                    },
+                    {
+                        "name": "country_code_2_digit",
+                        "type": "varchar"
+                    },
+                    {
+                        "name": "country_code_3_digit",
+                        "type": "varchar"
+                    },
+                    {
+                        "name": "population",
+                        "type": "bigint",
+                        "precision": 19
+                    },
+                    {
+                        "name": "reported_date",
+                        "type": "date"
+                    },
+                    {
+                        "name": "hospital_occupancy_count",
+                        "type": "bigint",
+                        "precision": 19
+                    },
+                    {
+                        "name": "icu_occupancy_count",
+                        "type": "bigint",
+                        "precision": 19
+                    },
+                    {
+                        "name": "source",
+                        "type": "varchar"
+                    }
+                ],
+                "typeProperties": {
+                    "schema": "covid_reporting",
+                    "table": "hospital_admissions_daily"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ds_sql_covid_cases')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "ls_sql_covid",
+                    "type": "LinkedServiceReference"
+                },
+                "folder": {
+                    "name": "sqldb"
+                },
+                "annotations": [],
+                "type": "AzureSqlTable",
+                "schema": [
+                    {
+                        "name": "country",
+                        "type": "varchar"
+                    },
+                    {
+                        "name": "country_code_2_digit",
+                        "type": "varchar"
+                    },
+                    {
+                        "name": "country_code_3_digit",
+                        "type": "varchar"
+                    },
+                    {
+                        "name": "population",
+                        "type": "bigint",
+                        "precision": 19
+                    },
+                    {
+                        "name": "cases_count",
+                        "type": "bigint",
+                        "precision": 19
+                    },
+                    {
+                        "name": "deaths_count",
+                        "type": "bigint",
+                        "precision": 19
+                    },
+                    {
+                        "name": "reported_date",
+                        "type": "date"
+                    },
+                    {
+                        "name": "source",
+                        "type": "varchar"
+                    }
+                ],
+                "typeProperties": {
+                    "schema": "covid_reporting",
+                    "table": "cases_and_deaths"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ds_sqldb_testing')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "ls_sql_covid",
+                    "type": "LinkedServiceReference"
+                },
+                "folder": {
+                    "name": "sqldb"
+                },
+                "annotations": [],
+                "type": "AzureSqlTable",
+                "schema": [
+                    {
+                        "name": "country",
+                        "type": "varchar"
+                    },
+                    {
+                        "name": "country_code_2_digit",
+                        "type": "varchar"
+                    },
+                    {
+                        "name": "country_code_3_digit",
+                        "type": "varchar"
+                    },
+                    {
+                        "name": "year_week",
+                        "type": "varchar"
+                    },
+                    {
+                        "name": "week_start_date",
+                        "type": "date"
+                    },
+                    {
+                        "name": "week_end_date",
+                        "type": "date"
+                    },
+                    {
+                        "name": "new_cases",
+                        "type": "bigint",
+                        "precision": 19
+                    },
+                    {
+                        "name": "tests_done",
+                        "type": "bigint",
+                        "precision": 19
+                    },
+                    {
+                        "name": "population",
+                        "type": "bigint",
+                        "precision": 19
+                    },
+                    {
+                        "name": "testing_data_source",
+                        "type": "varchar"
+                    }
+                ],
+                "typeProperties": {
+                    "schema": "covid_reporting",
+                    "table": "testing"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ds_processed_testing')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "ls_adls_covidreportingdl",
+                    "type": "LinkedServiceReference"
+                },
+                "folder": {
+                    "name": "processed"
+                },
+                "annotations": [],
+                "type": "DelimitedText",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobFSLocation",
+                        "folderPath": "ecdc/testing",
+                        "fileSystem": "processed"
+                    },
+                    "columnDelimiter": ",",
+                    "escapeChar": "\\",
+                    "firstRowAsHeader": false,
+                    "quoteChar": "\""
+                },
+                "schema": [
+                    {
+                        "name": "Austria",
+                        "type": "String"
+                    },
+                    {
+                        "name": "AT",
+                        "type": "String"
+                    },
+                    {
+                        "name": "AUT",
+                        "type": "String"
+                    },
+                    {
+                        "name": "2020-W15",
+                        "type": "String"
+                    },
+                    {
+                        "name": "2020-04-05",
+                        "type": "String"
+                    },
+                    {
+                        "name": "2020-04-11",
+                        "type": "String"
+                    },
+                    {
+                        "name": "2041",
+                        "type": "String"
+                    },
+                    {
+                        "name": "12339",
+                        "type": "String"
+                    },
+                    {
+                        "name": "8858775",
+                        "type": "String"
+                    },
+                    {
+                        "name": "139.285623576623",
+                        "type": "String"
+                    },
+                    {
+                        "name": "16.5410487073507",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Manual webscraping",
+                        "type": "String"
+                    }
+                ]
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ds_adl_resreqdata1')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "ls_adls_covidreportingdl",
+                    "type": "LinkedServiceReference"
+                },
+                "parameters": {
+                    "FileName1": {
+                        "type": "string"
+                    }
+                },
+                "annotations": [],
+                "type": "DelimitedText",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobFSLocation",
+                        "fileName": {
+                            "value": "@dataset().FileName1",
+                            "type": "Expression"
+                        },
+                        "folderPath": "API_data",
+                        "fileSystem": "resreqdata"
+                    },
+                    "columnDelimiter": ",",
+                    "escapeChar": "\\",
+                    "firstRowAsHeader": true,
+                    "quoteChar": "\""
+                },
+                "schema": []
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ds_rest_resreqdata')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "ls_rest_resreqdummysite",
+                    "type": "LinkedServiceReference"
+                },
+                "parameters": {
+                    "QueryParameter1": {
+                        "type": "string"
+                    }
+                },
+                "annotations": [],
+                "type": "RestResource",
+                "typeProperties": {
+                    "relativeUrl": {
+                        "value": "@dataset().QueryParameter1",
+                        "type": "Expression"
+                    }
+                },
+                "schema": []
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ds_blob_json_poke_api')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "ls_ablob_covidreportingsa",
+                    "type": "LinkedServiceReference"
+                },
+                "annotations": [],
+                "type": "Json",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobStorageLocation",
+                        "fileName": "poke_api_pagination.json",
+                        "container": "sink-poke-api"
+                    }
+                },
+                "schema": {}
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ds_rest_pokeapi')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "ls_rest_pokeapi",
+                    "type": "LinkedServiceReference"
+                },
+                "annotations": [],
+                "type": "RestResource",
+                "typeProperties": {},
+                "schema": []
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ds_sink_get_filenames_dynamically')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "ls_ablob_covidreportingsa",
+                    "type": "LinkedServiceReference"
+                },
+                "annotations": [],
+                "type": "Json",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobStorageLocation",
+                        "container": "get-filesnames-dynamically-output"
+                    }
+                },
+                "schema": {}
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ds_get_filenames_dynamically_json')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "ls_ablob_covidreportingsa",
+                    "type": "LinkedServiceReference"
+                },
+                "annotations": [],
+                "type": "Json",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobStorageLocation",
+                        "container": "docintelcontainer"
+                    }
+                },
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "$schema": {
+                            "type": "string"
+                        },
+                        "document": {
+                            "type": "string"
+                        },
+                        "labels": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "label": {
+                                        "type": "string"
+                                    },
+                                    "value": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "page": {
+                                                    "type": "integer"
+                                                },
+                                                "text": {
+                                                    "type": "string"
+                                                },
+                                                "boundingBoxes": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "number"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "status": {
+                            "type": "string"
+                        },
+                        "createdDateTime": {
+                            "type": "string"
+                        },
+                        "lastUpdatedDateTime": {
+                            "type": "string"
+                        },
+                        "analyzeResult": {
+                            "type": "object",
+                            "properties": {
+                                "apiVersion": {
+                                    "type": "string"
+                                },
+                                "modelId": {
+                                    "type": "string"
+                                },
+                                "stringIndexType": {
+                                    "type": "string"
+                                },
+                                "content": {
+                                    "type": "string"
+                                },
+                                "pages": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "pageNumber": {
+                                                "type": "integer"
+                                            },
+                                            "angle": {
+                                                "type": "integer"
+                                            },
+                                            "width": {
+                                                "type": "number"
+                                            },
+                                            "height": {
+                                                "type": "integer"
+                                            },
+                                            "unit": {
+                                                "type": "string"
+                                            },
+                                            "words": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "content": {
+                                                            "type": "string"
+                                                        },
+                                                        "polygon": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "number"
+                                                            }
+                                                        },
+                                                        "confidence": {
+                                                            "type": "number"
+                                                        },
+                                                        "span": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "offset": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "length": {
+                                                                    "type": "integer"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "lines": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "content": {
+                                                            "type": "string"
+                                                        },
+                                                        "polygon": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "number"
+                                                            }
+                                                        },
+                                                        "spans": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "offset": {
+                                                                        "type": "integer"
+                                                                    },
+                                                                    "length": {
+                                                                        "type": "integer"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "spans": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "offset": {
+                                                            "type": "integer"
+                                                        },
+                                                        "length": {
+                                                            "type": "integer"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "tables": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "rowCount": {
+                                                "type": "integer"
+                                            },
+                                            "columnCount": {
+                                                "type": "integer"
+                                            },
+                                            "cells": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "kind": {
+                                                            "type": "string"
+                                                        },
+                                                        "rowIndex": {
+                                                            "type": "integer"
+                                                        },
+                                                        "columnIndex": {
+                                                            "type": "integer"
+                                                        },
+                                                        "content": {
+                                                            "type": "string"
+                                                        },
+                                                        "boundingRegions": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "pageNumber": {
+                                                                        "type": "integer"
+                                                                    },
+                                                                    "polygon": {
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "number"
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        },
+                                                        "spans": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "offset": {
+                                                                        "type": "integer"
+                                                                    },
+                                                                    "length": {
+                                                                        "type": "integer"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "boundingRegions": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "pageNumber": {
+                                                            "type": "integer"
+                                                        },
+                                                        "polygon": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "number"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "spans": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "offset": {
+                                                            "type": "integer"
+                                                        },
+                                                        "length": {
+                                                            "type": "integer"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "paragraphs": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "spans": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "offset": {
+                                                            "type": "integer"
+                                                        },
+                                                        "length": {
+                                                            "type": "integer"
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "boundingRegions": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "pageNumber": {
+                                                            "type": "integer"
+                                                        },
+                                                        "polygon": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "number"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "role": {
+                                                "type": "string"
+                                            },
+                                            "content": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                },
+                                "styles": {
+                                    "type": "array"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ds_get_filename_dynamically_inside_foreach_activity')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "ls_ablob_covidreportingsa",
+                    "type": "LinkedServiceReference"
+                },
+                "parameters": {
+                    "filename": {
+                        "type": "string"
+                    }
+                },
+                "annotations": [],
+                "type": "Json",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobStorageLocation",
+                        "fileName": {
+                            "value": "@dataset().filename",
+                            "type": "Expression"
+                        },
+                        "container": "docintelcontainer"
+                    }
+                },
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "$schema": {
+                            "type": "string"
+                        },
+                        "document": {
+                            "type": "string"
+                        },
+                        "labels": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "label": {
+                                        "type": "string"
+                                    },
+                                    "value": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "page": {
+                                                    "type": "integer"
+                                                },
+                                                "text": {
+                                                    "type": "string"
+                                                },
+                                                "boundingBoxes": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "number"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "status": {
+                            "type": "string"
+                        },
+                        "createdDateTime": {
+                            "type": "string"
+                        },
+                        "lastUpdatedDateTime": {
+                            "type": "string"
+                        },
+                        "analyzeResult": {
+                            "type": "object",
+                            "properties": {
+                                "apiVersion": {
+                                    "type": "string"
+                                },
+                                "modelId": {
+                                    "type": "string"
+                                },
+                                "stringIndexType": {
+                                    "type": "string"
+                                },
+                                "content": {
+                                    "type": "string"
+                                },
+                                "pages": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "pageNumber": {
+                                                "type": "integer"
+                                            },
+                                            "angle": {
+                                                "type": "integer"
+                                            },
+                                            "width": {
+                                                "type": "number"
+                                            },
+                                            "height": {
+                                                "type": "integer"
+                                            },
+                                            "unit": {
+                                                "type": "string"
+                                            },
+                                            "words": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "content": {
+                                                            "type": "string"
+                                                        },
+                                                        "polygon": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "number"
+                                                            }
+                                                        },
+                                                        "confidence": {
+                                                            "type": "number"
+                                                        },
+                                                        "span": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "offset": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "length": {
+                                                                    "type": "integer"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "lines": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "content": {
+                                                            "type": "string"
+                                                        },
+                                                        "polygon": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "number"
+                                                            }
+                                                        },
+                                                        "spans": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "offset": {
+                                                                        "type": "integer"
+                                                                    },
+                                                                    "length": {
+                                                                        "type": "integer"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "spans": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "offset": {
+                                                            "type": "integer"
+                                                        },
+                                                        "length": {
+                                                            "type": "integer"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "tables": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "rowCount": {
+                                                "type": "integer"
+                                            },
+                                            "columnCount": {
+                                                "type": "integer"
+                                            },
+                                            "cells": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "kind": {
+                                                            "type": "string"
+                                                        },
+                                                        "rowIndex": {
+                                                            "type": "integer"
+                                                        },
+                                                        "columnIndex": {
+                                                            "type": "integer"
+                                                        },
+                                                        "content": {
+                                                            "type": "string"
+                                                        },
+                                                        "boundingRegions": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "pageNumber": {
+                                                                        "type": "integer"
+                                                                    },
+                                                                    "polygon": {
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "number"
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        },
+                                                        "spans": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "offset": {
+                                                                        "type": "integer"
+                                                                    },
+                                                                    "length": {
+                                                                        "type": "integer"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "boundingRegions": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "pageNumber": {
+                                                            "type": "integer"
+                                                        },
+                                                        "polygon": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "number"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "spans": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "offset": {
+                                                            "type": "integer"
+                                                        },
+                                                        "length": {
+                                                            "type": "integer"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "paragraphs": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "spans": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "offset": {
+                                                            "type": "integer"
+                                                        },
+                                                        "length": {
+                                                            "type": "integer"
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "boundingRegions": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "pageNumber": {
+                                                            "type": "integer"
+                                                        },
+                                                        "polygon": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "number"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "role": {
+                                                "type": "string"
+                                            },
+                                            "content": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                },
+                                "styles": {
+                                    "type": "array"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/BinaryDatasetForDeleteActivity')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "description": "Connect to your source store to delete files.",
+                "linkedServiceName": {
+                    "referenceName": "ls_ablob_covidreportingsa",
+                    "type": "LinkedServiceReference"
+                },
+                "parameters": {
+                    "FolderPath": {
+                        "type": "string"
+                    },
+                    "Directory": {
+                        "type": "string"
+                    }
+                },
+                "annotations": [],
+                "type": "Binary",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobStorageLocation",
+                        "folderPath": {
+                            "value": "@dataset().Directory",
+                            "type": "Expression"
+                        },
+                        "container": {
+                            "value": "@dataset().FolderPath",
+                            "type": "Expression"
+                        }
+                    }
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/pl_process_population_data')]",
+            "type": "Microsoft.DataFactory/factories/pipelines",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "activities": [
+                    {
+                        "name": "Transform Population",
+                        "type": "DatabricksNotebook",
+                        "dependsOn": [],
+                        "policy": {
+                            "timeout": "0.12:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "notebookPath": "/Users/leon.teodosio@3cloudsolutions.com/RG-TEO-APP COVID/TRANSFORM/transform_population_data"
+                        },
+                        "linkedServiceName": {
+                            "referenceName": "ds_db_rgteoapp_cluster",
+                            "type": "LinkedServiceReference"
+                        }
+                    }
+                ],
+                "policy": {
+                    "elapsedTimeMetric": {}
+                },
+                "folder": {
+                    "name": "process"
+                },
+                "annotations": [],
+                "lastPublishTime": "2024-07-03T17:43:54Z"
+            },
+            "dependsOn": []
+        }
+    ]
+}

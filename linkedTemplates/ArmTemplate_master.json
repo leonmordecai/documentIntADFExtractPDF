@@ -1,0 +1,221 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "factoryName": {
+            "type": "string",
+            "metadata": "Data Factory name",
+            "defaultValue": "adfteo1"
+        },
+        "ls_ablob_covidreportingsa_connectionString": {
+            "type": "secureString",
+            "metadata": "Secure string for 'connectionString' of 'ls_ablob_covidreportingsa'"
+        },
+        "ls_adls_covidreportingdl_accountKey": {
+            "type": "secureString",
+            "metadata": "Secure string for 'accountKey' of 'ls_adls_covidreportingdl'"
+        },
+        "ds_db_rgteoapp_cluster_accessToken": {
+            "type": "secureString",
+            "metadata": "Secure string for 'accessToken' of 'ds_db_rgteoapp_cluster'"
+        },
+        "ls_sql_covid_password": {
+            "type": "secureString",
+            "metadata": "Secure string for 'password' of 'ls_sql_covid'"
+        },
+        "ls_afunc_afuncteo1_functionKey": {
+            "type": "secureString",
+            "metadata": "Secure string for 'functionKey' of 'ls_afunc_afuncteo1'"
+        },
+        "ls_afunc_aduncteo2_masterkey_functionKey": {
+            "type": "secureString",
+            "metadata": "Secure string for 'functionKey' of 'ls_afunc_aduncteo2_masterkey'"
+        },
+        "tr_population_data_arrives_properties_typeProperties_scope": {
+            "type": "string",
+            "defaultValue": "/subscriptions/6c8e23df-4aec-4ed5-bec5-79853ea6c6c6/resourceGroups/rg-teo1/providers/Microsoft.Storage/storageAccounts/ablobteo1"
+        },
+        "ls_adls_covidreportingdl_properties_typeProperties_url": {
+            "type": "string",
+            "defaultValue": "https://adlteo1.dfs.core.windows.net/"
+        },
+        "ls_http_ecdc_eu_properties_typeProperties_url": {
+            "type": "string",
+            "defaultValue": "https://github.com"
+        },
+        "ls_sql_covid_properties_typeProperties_server": {
+            "type": "string",
+            "defaultValue": "sql-sv-teo1.database.windows.net"
+        },
+        "ls_sql_covid_properties_typeProperties_database": {
+            "type": "string",
+            "defaultValue": "sql-db-teo1"
+        },
+        "ls_sql_covid_properties_typeProperties_userName": {
+            "type": "string",
+            "defaultValue": "admin1"
+        },
+        "ls_afunc_afuncteo1_properties_typeProperties_functionAppUrl": {
+            "type": "string",
+            "defaultValue": "https://afuncteo1.azurewebsites.net"
+        },
+        "ls_afunc_aduncteo2_masterkey_properties_typeProperties_functionAppUrl": {
+            "type": "string",
+            "defaultValue": "https://afuncteo1.azurewebsites.net"
+        },
+        "ls_rest_resreqdummysite_properties_typeProperties_url": {
+            "type": "string",
+            "defaultValue": "https://reqres.in/api/users"
+        },
+        "ls_rest_forextractfrompdftemplate_properties_typeProperties_url": {
+            "type": "string",
+            "defaultValue": "@{linkedService().url}"
+        },
+        "ls_rest_pokeapi_properties_typeProperties_url": {
+            "type": "string",
+            "defaultValue": "https://pokeapi.co/api/v2/pokemon"
+        },
+        "containerUri": {
+            "type": "string",
+            "metadata": "URI to storage account containing linked ARM templates"
+        },
+        "containerSasToken": {
+            "type": "string",
+            "metadata": "Sas token to storage account containing linked ARM templates"
+        }
+    },
+    "variables": {
+        "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+    },
+    "resources": [
+        {
+            "name": "adfteo1_ArmTemplate_0",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2024-03-01",
+            "properties": {
+                "mode": "incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "factoryName": {
+                        "value": "[parameters('factoryName')]"
+                    },
+                    "ls_ablob_covidreportingsa_connectionString": {
+                        "value": "[parameters('ls_ablob_covidreportingsa_connectionString')]"
+                    },
+                    "ls_adls_covidreportingdl_accountKey": {
+                        "value": "[parameters('ls_adls_covidreportingdl_accountKey')]"
+                    },
+                    "ds_db_rgteoapp_cluster_accessToken": {
+                        "value": "[parameters('ds_db_rgteoapp_cluster_accessToken')]"
+                    },
+                    "ls_sql_covid_password": {
+                        "value": "[parameters('ls_sql_covid_password')]"
+                    },
+                    "ls_afunc_afuncteo1_functionKey": {
+                        "value": "[parameters('ls_afunc_afuncteo1_functionKey')]"
+                    },
+                    "ls_afunc_aduncteo2_masterkey_functionKey": {
+                        "value": "[parameters('ls_afunc_aduncteo2_masterkey_functionKey')]"
+                    },
+                    "ls_adls_covidreportingdl_properties_typeProperties_url": {
+                        "value": "[parameters('ls_adls_covidreportingdl_properties_typeProperties_url')]"
+                    },
+                    "ls_http_ecdc_eu_properties_typeProperties_url": {
+                        "value": "[parameters('ls_http_ecdc_eu_properties_typeProperties_url')]"
+                    },
+                    "ls_sql_covid_properties_typeProperties_server": {
+                        "value": "[parameters('ls_sql_covid_properties_typeProperties_server')]"
+                    },
+                    "ls_sql_covid_properties_typeProperties_database": {
+                        "value": "[parameters('ls_sql_covid_properties_typeProperties_database')]"
+                    },
+                    "ls_sql_covid_properties_typeProperties_userName": {
+                        "value": "[parameters('ls_sql_covid_properties_typeProperties_userName')]"
+                    },
+                    "ls_afunc_afuncteo1_properties_typeProperties_functionAppUrl": {
+                        "value": "[parameters('ls_afunc_afuncteo1_properties_typeProperties_functionAppUrl')]"
+                    },
+                    "ls_afunc_aduncteo2_masterkey_properties_typeProperties_functionAppUrl": {
+                        "value": "[parameters('ls_afunc_aduncteo2_masterkey_properties_typeProperties_functionAppUrl')]"
+                    },
+                    "ls_rest_resreqdummysite_properties_typeProperties_url": {
+                        "value": "[parameters('ls_rest_resreqdummysite_properties_typeProperties_url')]"
+                    },
+                    "ls_rest_forextractfrompdftemplate_properties_typeProperties_url": {
+                        "value": "[parameters('ls_rest_forextractfrompdftemplate_properties_typeProperties_url')]"
+                    },
+                    "ls_rest_pokeapi_properties_typeProperties_url": {
+                        "value": "[parameters('ls_rest_pokeapi_properties_typeProperties_url')]"
+                    }
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "adfteo1_ArmTemplate_1",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2024-03-01",
+            "properties": {
+                "mode": "incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "factoryName": {
+                        "value": "[parameters('factoryName')]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'adfteo1_ArmTemplate_0')]"
+            ]
+        },
+        {
+            "name": "adfteo1_ArmTemplate_2",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2024-03-01",
+            "properties": {
+                "mode": "incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "factoryName": {
+                        "value": "[parameters('factoryName')]"
+                    },
+                    "tr_population_data_arrives_properties_typeProperties_scope": {
+                        "value": "[parameters('tr_population_data_arrives_properties_typeProperties_scope')]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'adfteo1_ArmTemplate_1')]"
+            ]
+        },
+        {
+            "name": "adfteo1_ArmTemplate_3",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2024-03-01",
+            "properties": {
+                "mode": "incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('containerUri'), '/ArmTemplate_3.json', parameters('containerSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "factoryName": {
+                        "value": "[parameters('factoryName')]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'adfteo1_ArmTemplate_2')]"
+            ]
+        }
+    ]
+}

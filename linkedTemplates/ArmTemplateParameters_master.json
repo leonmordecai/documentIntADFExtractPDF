@@ -1,0 +1,66 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "factoryName": {
+            "value": "adfteo1"
+        },
+        "ls_ablob_covidreportingsa_connectionString": {
+            "value": ""
+        },
+        "ls_adls_covidreportingdl_accountKey": {
+            "value": ""
+        },
+        "ds_db_rgteoapp_cluster_accessToken": {
+            "value": ""
+        },
+        "ls_sql_covid_password": {
+            "value": ""
+        },
+        "ls_afunc_afuncteo1_functionKey": {
+            "value": ""
+        },
+        "ls_afunc_aduncteo2_masterkey_functionKey": {
+            "value": ""
+        },
+        "tr_population_data_arrives_properties_typeProperties_scope": {
+            "value": "/subscriptions/6c8e23df-4aec-4ed5-bec5-79853ea6c6c6/resourceGroups/rg-teo1/providers/Microsoft.Storage/storageAccounts/ablobteo1"
+        },
+        "ls_adls_covidreportingdl_properties_typeProperties_url": {
+            "value": "https://adlteo1.dfs.core.windows.net/"
+        },
+        "ls_http_ecdc_eu_properties_typeProperties_url": {
+            "value": "https://github.com"
+        },
+        "ls_sql_covid_properties_typeProperties_server": {
+            "value": "sql-sv-teo1.database.windows.net"
+        },
+        "ls_sql_covid_properties_typeProperties_database": {
+            "value": "sql-db-teo1"
+        },
+        "ls_sql_covid_properties_typeProperties_userName": {
+            "value": "admin1"
+        },
+        "ls_afunc_afuncteo1_properties_typeProperties_functionAppUrl": {
+            "value": "https://afuncteo1.azurewebsites.net"
+        },
+        "ls_afunc_aduncteo2_masterkey_properties_typeProperties_functionAppUrl": {
+            "value": "https://afuncteo1.azurewebsites.net"
+        },
+        "ls_rest_resreqdummysite_properties_typeProperties_url": {
+            "value": "https://reqres.in/api/users"
+        },
+        "ls_rest_forextractfrompdftemplate_properties_typeProperties_url": {
+            "value": "@{linkedService().url}"
+        },
+        "ls_rest_pokeapi_properties_typeProperties_url": {
+            "value": "https://pokeapi.co/api/v2/pokemon"
+        },
+        "containerUri": {
+            "value": ""
+        },
+        "containerSasToken": {
+            "value": ""
+        }
+    }
+}
