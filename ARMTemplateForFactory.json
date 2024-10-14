@@ -3960,7 +3960,7 @@
                     },
                     "CognitiveServicesKey": {
                         "type": "string",
-                        "defaultValue": "68031f9775124bfaa6484794efd26682"
+                        "defaultValue": "--"
                     },
                     "PDF_SourceURL": {
                         "type": "string",
